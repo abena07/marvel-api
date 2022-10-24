@@ -1,42 +1,47 @@
-from django.shortcuts import render
+from django.shortcuts import render,get_object_or_404,redirect
 from rest_framework import viewsets
 from .serializers import HeroSerializer
 from .models import Hero
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import permissions
+from rest_framework import status
+
 
 # Create your views here.
 class HeroViewSet(viewsets.ModelViewSet):
     queryset = Hero.objects.all().order_by('name')
     serializer_class = HeroSerializer
 
-"""class NoteViewSet(viewsets.ModelViewSet):
-    queryset = Note.objects.all().order_by('title')
-    serializer_class = NoteSerializer"""
+class HeroViewSet(viewsets.ModelViewSet):
+    queryset = Hero.objects.all().order_by('title')
+    serializer_class = HeroSerializer
 
-"""class NoteApiView(APIView):
+class HeroApiView(APIView):
     # add permission to check if user is authenticated
     permission_classes = [permissions.IsAuthenticated]
-    #function to get all notes
+    #function to get all heroes
     def get(self, request, *args, **kwargs ):
         
-     notes = Note.objects.all().order_by('id')
-     serializer = NoteSerializer(notes, many=True)
+     heroes = Hero.objects.all().order_by('id')
+     serializer = HeroSerializer(heroes, many=True)
      return Response(serializer.data, status=status.HTTP_200_OK)
      
 
-    #function to create a new note
-    def note(self, request, *args, **kwargs):
+    #function to create a new hero
+    def Hero(self, request, *args, **kwargs):
      
         data = {
-            'title': request.data.get('title'), 
-            'content': request.data.get('content'), 
+            'name': request.data.get('name'), 
+            'alias': request.data.get('alias'), 
             'id':request.data.get('id')
         }
-        serializer = NoteSerializer(data=data)
+        serializer = HeroSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-class NoteDetailApiView(APIView):
+class HeroDetailApiView(APIView):
     # add permission to check if user is authenticated
     permission_classes = [permissions.IsAuthenticated]
     def get_object(self, id):
@@ -44,40 +49,40 @@ class NoteDetailApiView(APIView):
         Helper method to get the object with given id, 
         '''
         try:
-            return Note.objects.get(id=id)
-        except Note.DoesNotExist:
+            return Hero.objects.get(id=id)
+        except Hero.DoesNotExist:
             return None
     
     def get(self, request, id, *args, **kwargs):
         '''
-        Retrieves the note with given note_id
+        Retrieves the hero with given hero_id
         '''
-        note_instance = self.get_object(id)
-        if not note_instance:
+        hero_instance = self.get_object(id)
+        if not hero_instance:
             return Response(
-                {"res": "Object with note id does not exists"},
+                {"res": "Object with hero id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        serializer = NoteSerializer(note_instance)
+        serializer = HeroSerializer(hero_instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
     # 4. Update
     def put(self, request, id, *args, **kwargs):
         '''
-        Updates the note item with given note_id if exists
+        Updates the hero item with given hero_id if exists
         '''
-        note_instance = self.get_object(id)
-        if not note_instance:
+        hero_instance = self.get_object(id)
+        if not hero_instance:
             return Response(
-                {"res": "Object with todo id does not exists"}, 
+                {"res": "Object with hero id does not exists"}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
         data = {
-            'title': request.data.get('title'), 
-            'content': request.data.get('content'), 
+            'name': request.data.get('name'), 
+            'alias': request.data.get('alias'), 
             'id':request.data.get('id')
         }
-        serializer =    NoteSerializer(instance = note_instance, data=data, partial = True)
+        serializer = HeroSerializer(instance = hero_instance, data=data, partial = True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -85,16 +90,16 @@ class NoteDetailApiView(APIView):
     # 5. Delete
     def delete(self, request, id, *args, **kwargs):
         '''
-        Deletes the note item with given id if exists
+        Deletes the hero item with given id if exists
         '''
-        note_instance = self.get_object(id)
-        if not note_instance:
+        hero_instance = self.get_object(id)
+        if not hero_instance:
             return Response(
-                {"res": "Object with todo id does not exists"}, 
+                {"res": "Object with hero id does not exists"}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
-        note_instance.delete()
+        hero_instance.delete()
         return Response(
             {"res": "Object deleted!"},
             status=status.HTTP_200_OK
-        )"""
+        )
