@@ -14,7 +14,7 @@ class HeroViewSet(viewsets.ModelViewSet):
     serializer_class = HeroSerializer
 
 class HeroViewSet(viewsets.ModelViewSet):
-    queryset = Hero.objects.all().order_by('title')
+    queryset = Hero.objects.all().order_by('name')
     serializer_class = HeroSerializer
 
 class HeroApiView(APIView):
